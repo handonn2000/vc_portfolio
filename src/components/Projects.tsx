@@ -7,8 +7,8 @@ const projects = [
         description: "A research project exploring Spring Cloud, Kafka, and Keycloak. Implemented a full microservices architecture with centralized auth and event-driven communication.",
         tags: ["Java", "Spring Boot", "Kafka", "Keycloak"],
         links: {
-            github: "https://github.com",
-            demo: "#"
+            github: "https://github.com/handonn2000/ms-finapp-demo",
+            demo: "https://github.com/handonn2000/ms-finapp-demo"
         }
     },
     {
@@ -16,8 +16,8 @@ const projects = [
         description: "A dedicated repository for mastering Data Structures and Algorithms in Python. Contains implementations of core algorithms and solutions to complex problems.",
         tags: ["Python", "Algorithms", "Data Structures"],
         links: {
-            github: "https://github.com",
-            demo: "#"
+            github: "https://github.com/handonn2000/dsa_101",
+            demo: "https://github.com/handonn2000/dsa_101"
         }
     },
     {
@@ -25,8 +25,8 @@ const projects = [
         description: "Graduation thesis project. A web application leveraging NFTs to facilitate fundraising for charitable organizations. Built with React and Blockchain integration.",
         tags: ["React", "Blockchain", "NFT", "Web3"],
         links: {
-            github: "#",
-            demo: "#"
+            github: "https://drive.google.com/drive/u/1/folders/176Uw-JZB5MK7egJIKN4gHqO_Co7dXGNj",
+            demo: "https://drive.google.com/drive/u/1/folders/176Uw-JZB5MK7egJIKN4gHqO_Co7dXGNj"
         }
     }
 ]
