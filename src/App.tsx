@@ -1,8 +1,19 @@
+import Layout from './components/Layout'
+import Hero from './components/Hero'
+import About from './components/About'
+import Skills from './components/Skills'
+import Experience from './components/Experience'
+import Projects from './components/Projects'
+
 function App() {
   return (
-    <div className="flex items-center justify-center h-screen bg-nature-50 text-nature-900">
-      <h1 className="text-4xl font-bold">Hello World</h1>
-    </div>
+    <Layout>
+      <Hero />
+      <About />
+      <Skills />
+      <Experience />
+      <Projects />
+    </Layout>
   )
 }
 
