@@ -48,10 +48,10 @@ export default function Navbar() {
 
                     {/* Social Icons */}
                     <div className="hidden md:flex items-center gap-4 border-l border-white/10 pl-6">
-                        <a href="https://github.com" target="_blank" rel="noreferrer" className="text-nature-200 hover:text-white transition-colors">
+                        <a href="https://github.com/handonn2000" target="_blank" rel="noreferrer" className="text-nature-200 hover:text-white transition-colors">
                             <Github size={20} />
                         </a>
-                        <a href="https://linkedin.com" target="_blank" rel="noreferrer" className="text-nature-200 hover:text-white transition-colors">
+                        <a href="https://www.linkedin.com/in/nhathando20/" target="_blank" rel="noreferrer" className="text-nature-200 hover:text-white transition-colors">
                             <Linkedin size={20} />
                         </a>
                         <a href="mailto:handonn542000@gmail.com" className="text-nature-200 hover:text-white transition-colors">
@@ -84,10 +84,10 @@ export default function Navbar() {
                             </a>
                         ))}
                         <div className="flex gap-6 pt-4 border-t border-white/10 justify-center">
-                            <a href="https://github.com" target="_blank" rel="noreferrer" className="text-nature-200 hover:text-white">
+                            <a href="https://github.com/handonn2000" target="_blank" rel="noreferrer" className="text-nature-200 hover:text-white">
                                 <Github size={24} />
                             </a>
-                            <a href="https://linkedin.com" target="_blank" rel="noreferrer" className="text-nature-200 hover:text-white">
+                            <a href="https://www.linkedin.com/in/nhathando20/" target="_blank" rel="noreferrer" className="text-nature-200 hover:text-white">
                                 <Linkedin size={24} />
                             </a>
                             <a href="mailto:handonn542000@gmail.com" className="text-nature-200 hover:text-white">
