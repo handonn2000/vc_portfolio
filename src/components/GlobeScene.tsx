@@ -71,12 +71,14 @@ function ParticleGlobe({ onHover }: { onHover: (project: string | null) => void 
         return particles
     }, [earthMap])
 
-    useFrame(() => {
+    useFrame((state) => {
         if (!meshRef.current || !intersectionRef.current) return
 
         // Raycast to find mouse position on the globe surface
         raycaster.setFromCamera(pointer, camera)
         const intersects = raycaster.intersectObject(intersectionRef.current)
+
+        const t = state.clock.getElapsedTime() // Capture time here
 
         let point: THREE.Vector3 | null = null
         if (intersects.length > 0) {
@@ -96,7 +98,6 @@ function ParticleGlobe({ onHover }: { onHover: (project: string | null) => void 
                     const dir = new THREE.Vector3().subVectors(origin, point).normalize()
 
                     // Add "Scatter" noise
-                    // We want them to move generally away, but with some chaotic deviation
                     dir.x += (Math.random() - 0.5) * 0.5
                     dir.y += (Math.random() - 0.5) * 0.5
                     dir.z += (Math.random() - 0.5) * 0.5
@@ -105,8 +106,16 @@ function ParticleGlobe({ onHover }: { onHover: (project: string | null) => void 
                     // Force magnitude
                     const force = (1 - dist / repulsionRadius) * maxRepulsion
 
-                    // Target position
-                    const targetPos = origin.clone().add(dir.multiplyScalar(force))
+                    // Wave Effect: Sine wave based on distance and time
+                    // ripple = sin(distance * frequency - time * speed) * amplitude
+                    const wave = Math.sin(dist * 10 - t * 5) * 0.1
+
+                    // Target position: Origin + Repulsion + Wave
+                    // We apply the wave along the original normal (origin normalized)
+                    const normal = origin.clone().normalize()
+                    const targetPos = origin.clone()
+                        .add(dir.multiplyScalar(force)) // Repulsion (scatter)
+                        .add(normal.multiplyScalar(wave)) // Wave ripple
 
                     // Move faster away (avoidance)
                     current.lerp(targetPos, 0.2)
