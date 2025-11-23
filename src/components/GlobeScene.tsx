@@ -117,47 +117,99 @@ function ParticleGlobe({ onHover }: { onHover: (project: string | null) => void 
 }
 
 function Marker({ position, name, onHover }: { position: THREE.Vector3, name: string, onHover: (n: string | null) => void }) {
-    const ref = useRef<THREE.Mesh>(null)
+    const groupRef = useRef<THREE.Group>(null)
+    const ringRef = useRef<THREE.Mesh>(null)
     const [hovered, setHovered] = useState(false)
 
+    // Define the Pin Shape
+    const pinShape = useMemo(() => {
+        const s = new THREE.Shape()
+        // Start at bottom tip
+        s.moveTo(0, 0)
+        // Curve up left
+        s.quadraticCurveTo(-0.4, 0.4, -0.4, 0.9)
+        // Top Arc (Semi-circle)
+        s.absarc(0, 0.9, 0.4, Math.PI, 0, true)
+        // Curve down right
+        s.quadraticCurveTo(0.4, 0.4, 0, 0)
+
+        // Hole
+        const hole = new THREE.Path()
+        hole.absarc(0, 0.9, 0.18, 0, Math.PI * 2, false)
+        s.holes.push(hole)
+
+        return s
+    }, [])
+
     useFrame((state) => {
-        if (ref.current) {
-            // Pulse effect
-            const t = state.clock.getElapsedTime()
-            const scale = 1 + Math.sin(t * 3) * 0.2
-            ref.current.scale.set(scale, scale, scale)
-            ref.current.lookAt(new THREE.Vector3(2.5, 0, 0)) // Look at center of globe (shifted)
+        const t = state.clock.getElapsedTime()
+
+        if (groupRef.current) {
+            // Billboard effect: Always face the camera
+            groupRef.current.quaternion.copy(state.camera.quaternion)
+
+            // Base scale is smaller now (0.2)
+            const baseScale = 0.2
+            const targetScale = hovered ? baseScale * 1.2 : baseScale
+            groupRef.current.scale.lerp(new THREE.Vector3(targetScale, targetScale, targetScale), 0.1)
+        }
+
+        if (ringRef.current) {
+            // Radar ping effect
+            const ringScale = 1 + (t * 2) % 1.5
+            ringRef.current.scale.set(ringScale, ringScale, 1)
+
+            const opacity = 0.5 * (1 - ((t * 2) % 1.5) / 1.5)
+            if (Array.isArray(ringRef.current.material)) {
+                // Handle array material
+            } else {
+                (ringRef.current.material as THREE.MeshBasicMaterial).opacity = opacity
+            }
         }
     })
 
     return (
-        <mesh
-            ref={ref}
-            position={position}
-            onPointerOver={(e) => {
-                e.stopPropagation()
-                setHovered(true)
-                onHover(name)
-                document.body.style.cursor = 'pointer'
-            }}
-            onPointerOut={() => {
-                setHovered(false)
-                onHover(null)
-                document.body.style.cursor = 'auto'
-            }}
-        >
-            <cylinderGeometry args={[0.1, 0.05, 0.5, 8]} />
-            <meshBasicMaterial
-                color={hovered ? "#00FF55" : "#00DD39"}
-                transparent
-                opacity={0.8}
-            />
-            {/* Glow Halo */}
-            <mesh position={[0, -0.25, 0]} rotation={[Math.PI / 2, 0, 0]}>
-                <ringGeometry args={[0.1, 0.3, 16]} />
-                <meshBasicMaterial color="#00DD39" transparent opacity={0.3} side={THREE.DoubleSide} />
-            </mesh>
-        </mesh>
+        <group position={position}>
+            {/* Pin Group - Billboards to Camera */}
+            <group ref={groupRef} scale={[0.2, 0.2, 0.2]}>
+                <group position={[0, 0.1, 0]}> {/* Lift pin slightly */}
+                    <mesh
+                        onPointerOver={(e) => {
+                            e.stopPropagation()
+                            setHovered(true)
+                            onHover(name)
+                            document.body.style.cursor = 'pointer'
+                        }}
+                        onPointerOut={() => {
+                            setHovered(false)
+                            onHover(null)
+                            document.body.style.cursor = 'auto'
+                        }}
+                    >
+                        <extrudeGeometry args={[pinShape, { depth: 0.1, bevelEnabled: true, bevelSize: 0.02, bevelThickness: 0.02 }]} />
+                        <meshStandardMaterial
+                            color={hovered ? "#00FFFF" : "#00DD39"}
+                            emissive={hovered ? "#00FFFF" : "#00DD39"}
+                            emissiveIntensity={0.6}
+                            metalness={0.8}
+                            roughness={0.2}
+                        />
+                    </mesh>
+
+                    {/* Dark Inner Dot */}
+                    <mesh position={[0, 0.9, 0.05]}>
+                        <cylinderGeometry args={[0.17, 0.17, 0.12, 32]} />
+                        <meshBasicMaterial color="#0f1715" />
+                    </mesh>
+                </group>
+
+                {/* Pulsing Ring - Now inside billboard group, rotated to be "floor" of the pin */}
+                <mesh ref={ringRef} position={[0, -0.1, 0]} rotation={[-Math.PI / 2, 0, 0]}>
+                    <ringGeometry args={[0.2, 0.8, 32]} />
+                    <meshBasicMaterial color="#00DD39" transparent opacity={0.5} side={THREE.DoubleSide} />
+                </mesh>
+            </group>
+        </group>
     )
 }
 
