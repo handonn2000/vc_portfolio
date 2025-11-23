@@ -3,10 +3,21 @@ import { Briefcase, Calendar, MapPin } from 'lucide-react'
 
 const experiences = [
     {
+        company: "NAB Innovation Centre Vietnam",
+        role: "Software Engineer",
+        location: "Ho Chi Minh City, Vietnam",
+        period: "Sep 2024 - Present",
+        achievements: [
+            "Contributing to the Financial Crime Workbench – Case Management platform for transaction monitoring and customer due diligence.",
+            "Designed and implemented APIs for seamless integration across microservices using Java 17, Spring Boot, and PostgreSQL.",
+            "Delivered robust backend foundation enhancing NAB's investigative efficiency and compliance capabilities."
+        ]
+    },
+    {
         company: "Mondia Digital",
         role: "Software Engineer - Backend",
         location: "Dubai, UAE (Remote)",
-        period: "Oct 2023 - Present",
+        period: "Oct 2023 - Aug 2024",
         achievements: [
             "Migrated Subscription Aggregator System using Java 17, Spring Boot, MongoDB, and Kafka.",
             "Designed new stock management architecture for inventory operations.",
