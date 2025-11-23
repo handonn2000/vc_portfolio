@@ -319,7 +319,6 @@ export default function GlobeScene() {
                                 <span className="w-2 h-2 rounded-full bg-[#00DD39] animate-pulse" />
                                 {hoveredProject}
                             </h3>
-                            <p className="text-nature-300 text-xs mt-1">CCUS Project Active</p>
                         </div>
                     </motion.div>
                 )}
