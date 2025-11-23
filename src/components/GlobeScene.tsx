@@ -87,30 +87,35 @@ function ParticleGlobe({ onHover }: { onHover: (project: string | null) => void 
             const { origin, current, size } = particle
 
             if (point) {
-                // Calculate distance to mouse point
                 const dist = origin.distanceTo(point)
-                const repulsionRadius = 1.5
-                const maxRepulsion = 0.5
+                const repulsionRadius = 2.0 // Increased radius
+                const maxRepulsion = 0.8 // Increased force
 
                 if (dist < repulsionRadius) {
-                    // Repulsion force: Push away from point
-                    // Direction from point to particle
+                    // Calculate direction from cursor to particle
                     const dir = new THREE.Vector3().subVectors(origin, point).normalize()
-                    // Force magnitude decreases with distance
+
+                    // Add "Scatter" noise
+                    // We want them to move generally away, but with some chaotic deviation
+                    dir.x += (Math.random() - 0.5) * 0.5
+                    dir.y += (Math.random() - 0.5) * 0.5
+                    dir.z += (Math.random() - 0.5) * 0.5
+                    dir.normalize()
+
+                    // Force magnitude
                     const force = (1 - dist / repulsionRadius) * maxRepulsion
 
-                    // Target position is origin + force * direction
+                    // Target position
                     const targetPos = origin.clone().add(dir.multiplyScalar(force))
 
-                    // Smoothly move current to target
-                    current.lerp(targetPos, 0.1)
+                    // Move faster away (avoidance)
+                    current.lerp(targetPos, 0.2)
                 } else {
-                    // Return to origin
-                    current.lerp(origin, 0.1)
+                    // Return to origin slowly (floating back)
+                    current.lerp(origin, 0.05)
                 }
             } else {
-                // Return to origin if no intersection
-                current.lerp(origin, 0.1)
+                current.lerp(origin, 0.05)
             }
 
             dummy.position.copy(current)
