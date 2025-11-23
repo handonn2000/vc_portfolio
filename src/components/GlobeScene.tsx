@@ -1,5 +1,5 @@
-import { useState, useMemo, useRef, useEffect } from 'react'
-import { Canvas, useFrame, useLoader } from '@react-three/fiber'
+import { useState, useMemo, useRef } from 'react'
+import { Canvas, useFrame, useLoader, useThree } from '@react-three/fiber'
 import { OrbitControls, Float, Stars, Sparkles } from '@react-three/drei'
 import * as THREE from 'three'
 import { motion, AnimatePresence } from 'framer-motion'
@@ -23,15 +23,15 @@ function latLonToVector3(lat: number, lon: number, radius: number) {
 }
 
 function ParticleGlobe({ onHover }: { onHover: (project: string | null) => void }) {
-    const globeRadius = 4 // Reduced size
-    // Load Earth Specular Map (Black ocean, white land)
-    // Using a reliable public URL for the texture
+    const globeRadius = 4
     const earthMap = useLoader(THREE.TextureLoader, 'https://raw.githubusercontent.com/mrdoob/three.js/master/examples/textures/planets/earth_specular_2048.jpg')
 
     const meshRef = useRef<THREE.InstancedMesh>(null)
     const dummy = useMemo(() => new THREE.Object3D(), [])
+    const { raycaster, pointer, camera } = useThree()
+    const intersectionRef = useRef<THREE.Mesh>(null) // Invisible sphere for raycasting
 
-    // Generate Particles from Texture
+    // Generate Particles
     const particleData = useMemo(() => {
         const tempCanvas = document.createElement('canvas')
         tempCanvas.width = earthMap.image.width
@@ -44,57 +44,99 @@ function ParticleGlobe({ onHover }: { onHover: (project: string | null) => void 
         const data = imgData.data
 
         const particles = []
-        const step = 3 // Increased density (lower step = more particles)
+        const step = 3
 
         for (let y = 0; y < tempCanvas.height; y += step) {
             for (let x = 0; x < tempCanvas.width; x += step) {
                 const i = (y * tempCanvas.width + x) * 4
                 const r = data[i]
 
-                // If pixel is bright (land), add a particle
                 if (r > 50) {
-                    // Map 2D UV to 3D Sphere
-                    // Note: Texture mapping might need inversion depending on the source image
-                    // Standard equirectangular map: 
-                    // phi (lat) goes from 0 (top) to PI (bottom)
-                    // theta (lon) goes from 0 to 2PI
-
                     const phi = (y / tempCanvas.height) * Math.PI
-                    const theta = (x / tempCanvas.width) * 2 * Math.PI - (Math.PI / 2) // Adjust rotation to align with markers
+                    const theta = (x / tempCanvas.width) * 2 * Math.PI - (Math.PI / 2)
 
                     const vX = globeRadius * Math.sin(phi) * Math.cos(theta)
                     const vY = globeRadius * Math.cos(phi)
                     const vZ = globeRadius * Math.sin(phi) * Math.sin(theta)
 
-                    particles.push({ pos: new THREE.Vector3(vX, vY, vZ), size: Math.random() * 0.03 + 0.01 })
+                    // Store original position and current position
+                    particles.push({
+                        origin: new THREE.Vector3(vX, vY, vZ),
+                        current: new THREE.Vector3(vX, vY, vZ),
+                        size: Math.random() * 0.03 + 0.01
+                    })
                 }
             }
         }
         return particles
     }, [earthMap])
 
-    useEffect(() => {
-        if (meshRef.current) {
-            particleData.forEach((particle, i) => {
-                dummy.position.copy(particle.pos)
-                dummy.scale.set(particle.size, particle.size, particle.size)
-                dummy.lookAt(new THREE.Vector3(0, 0, 0)) // Face center
-                dummy.updateMatrix()
-                meshRef.current!.setMatrixAt(i, dummy.matrix)
-            })
-            meshRef.current.instanceMatrix.needsUpdate = true
+    useFrame(() => {
+        if (!meshRef.current || !intersectionRef.current) return
+
+        // Raycast to find mouse position on the globe surface
+        raycaster.setFromCamera(pointer, camera)
+        const intersects = raycaster.intersectObject(intersectionRef.current)
+
+        let point: THREE.Vector3 | null = null
+        if (intersects.length > 0) {
+            point = intersects[0].point
         }
-    }, [particleData, dummy])
+
+        particleData.forEach((particle, i) => {
+            const { origin, current, size } = particle
+
+            if (point) {
+                // Calculate distance to mouse point
+                const dist = origin.distanceTo(point)
+                const repulsionRadius = 1.5
+                const maxRepulsion = 0.5
+
+                if (dist < repulsionRadius) {
+                    // Repulsion force: Push away from point
+                    // Direction from point to particle
+                    const dir = new THREE.Vector3().subVectors(origin, point).normalize()
+                    // Force magnitude decreases with distance
+                    const force = (1 - dist / repulsionRadius) * maxRepulsion
+
+                    // Target position is origin + force * direction
+                    const targetPos = origin.clone().add(dir.multiplyScalar(force))
+
+                    // Smoothly move current to target
+                    current.lerp(targetPos, 0.1)
+                } else {
+                    // Return to origin
+                    current.lerp(origin, 0.1)
+                }
+            } else {
+                // Return to origin if no intersection
+                current.lerp(origin, 0.1)
+            }
+
+            dummy.position.copy(current)
+            dummy.scale.set(size, size, size)
+            dummy.lookAt(new THREE.Vector3(0, 0, 0))
+            dummy.updateMatrix()
+            meshRef.current!.setMatrixAt(i, dummy.matrix)
+        })
+        meshRef.current.instanceMatrix.needsUpdate = true
+    })
 
     return (
         <group>
             {/* Particles */}
             <instancedMesh ref={meshRef} args={[undefined, undefined, particleData.length]}>
-                <sphereGeometry args={[0.35, 4, 4]} /> {/* Smaller dots */}
-                <meshBasicMaterial color="#00DD39" transparent opacity={0.4} /> {/* Lower opacity */}
+                <sphereGeometry args={[0.35, 4, 4]} />
+                <meshBasicMaterial color="#00DD39" transparent opacity={0.4} />
             </instancedMesh>
 
-            {/* Inner Dark Sphere to block background seeing through */}
+            {/* Invisible Sphere for Raycasting */}
+            <mesh ref={intersectionRef} visible={false}>
+                <sphereGeometry args={[globeRadius, 32, 32]} />
+                <meshBasicMaterial />
+            </mesh>
+
+            {/* Inner Dark Sphere */}
             <mesh>
                 <sphereGeometry args={[globeRadius - 0.1, 32, 32]} />
                 <meshBasicMaterial color="#0f1715" transparent opacity={0.95} />
