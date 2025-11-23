@@ -31,7 +31,8 @@ Build a responsive, interactive web portfolio for **Han Do-Nguyen-Nhat** (Softwa
 -   **Cloud & DevOps**: AWS (EC2, ECS, S3, Lambda), Docker, CI/CD (Jenkins/GitLab CI - implied from "System design" and "Microservices")
 
 ### 4. Experience
--   **Mondia Digital** (Oct 2023 - Present): Backend Engineer. Migrated Subscription Aggregator, designed stock management.
+-   **NAB Innovation Centre Vietnam** (Sep 2024 - Present): Software Engineer. Contributing to the Financial Crime Workbench – Case Management platform for transaction monitoring and customer due diligence. Designed and implemented APIs for seamless microservices integration using Java 17, Spring Boot, and PostgreSQL.
+-   **Mondia Digital** (Oct 2023 - Sep 2024): Backend Engineer. Migrated Subscription Aggregator, designed stock management.
 -   **Nash Squared** (Sep 2021 - Aug 2023): Backend Engineer. Built E-commerce Aggregator, optimized batch processing.
 -   **GB Smart Innovation JSC** (Aug 2020 - Dec 2021): Mobile Developer. Android app for employee management.
 

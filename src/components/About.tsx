@@ -8,8 +8,8 @@ export default function About() {
                 <div className="space-y-6 text-lg text-nature-200 leading-relaxed">
                     <p>
                         I'm a <span className="text-white font-semibold">Software Engineer</span> specializing in
-                        backend development and cloud-native architectures. With over 3 years of experience working with
-                        international clients from Dubai and the UK, I've honed my skills in building scalable,
+                        backend development and cloud-native architectures. With over 4 years of experience working with
+                        international clients from Dubai, the UK, and Australia (NAB - Big 4 bank), I've honed my skills in building scalable,
                         high-performance systems.
                     </p>
                     <p>
@@ -19,11 +19,11 @@ export default function About() {
                     </p>
                     <div className="flex gap-4 pt-4">
                         <div className="glass-card p-4 rounded-xl text-center flex-1">
-                            <h3 className="text-3xl font-bold text-white mb-1">3+</h3>
+                            <h3 className="text-3xl font-bold text-white mb-1">4+</h3>
                             <p className="text-sm text-nature-300">Years Exp.</p>
                         </div>
                         <div className="glass-card p-4 rounded-xl text-center flex-1">
-                            <h3 className="text-3xl font-bold text-white mb-1">10+</h3>
+                            <h3 className="text-3xl font-bold text-white mb-1">3</h3>
                             <p className="text-sm text-nature-300">Projects</p>
                         </div>
                         <div className="glass-card p-4 rounded-xl text-center flex-1">

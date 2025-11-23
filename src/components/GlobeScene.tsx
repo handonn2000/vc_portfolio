@@ -6,11 +6,10 @@ import { motion, AnimatePresence } from 'framer-motion'
 
 // Project Data
 const PROJECTS = [
-    { name: "Edmonton, Canada", lat: 53.5461, lon: -113.4938 },
-    { name: "Brevik, Norway", lat: 59.0533, lon: 9.7027 },
-    { name: "Padeswood, UK", lat: 53.15, lon: -3.05 },
-    { name: "Slite, Sweden", lat: 57.68, lon: 18.79 },
-    { name: "Mitchell, Indiana", lat: 38.73, lon: -86.47 },
+    { name: "Ho Chi Minh City, Vietnam", lat: 10.8231, lon: 106.6297 },
+    { name: "Melbourne, Australia", lat: -37.8136, lon: 144.9631 },
+    { name: "Manchester, UK", lat: 53.4808, lon: -2.2426 },
+    { name: "Dubai, UAE", lat: 25.2048, lon: 55.2708 },
 ]
 
 // Convert Lat/Lon to Vector3
