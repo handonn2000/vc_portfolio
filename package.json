@@ -12,6 +12,8 @@
   },
   "dependencies": {
     "@gsap/react": "^2.1.2",
+    "@pixi/filter-pixelate": "^5.1.1",
+    "@pixi/react": "^7.1.1",
     "@react-three/drei": "^10.7.7",
     "@react-three/fiber": "^9.4.0",
     "@types/three": "^0.181.0",
@@ -20,6 +22,7 @@
     "gsap": "^3.13.0",
     "lucide-react": "^0.554.0",
     "maath": "^0.10.8",
+    "pixi.js": "^7.3.2",
     "react": "^19.2.0",
     "react-dom": "^19.2.0",
     "three": "^0.181.2"
