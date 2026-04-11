@@ -72,7 +72,7 @@ export default function LunarConfession() {
 
     const pixelFilter = new PixelateFilter(2.5);
     const gameContainer = new PIXI.Container();
-    gameContainer.filters = [pixelFilter];
+    gameContainer.filters = [pixelFilter] as any;
     app.stage.addChild(gameContainer);
 
     /* ====== VISUAL ENVIRONMENT ====== */
